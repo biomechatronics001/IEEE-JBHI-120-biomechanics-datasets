@@ -145,8 +145,10 @@ h1 .em{color:var(--accent)}
 #ramp svg{border-radius:2px}
 .hitnote{color:var(--accent);font-size:.8rem;font-family:var(--font-mono);margin:.3rem 0 0;min-height:1.1em}
 .read{color:var(--muted);font-size:.9rem;margin:9px 0 0;line-height:1.5}
-#caveatBox{margin:9px 0 2px;font-size:.85rem;color:var(--norm-line);background:var(--norm-soft);
-  border:1px solid var(--norm-edge);border-radius:var(--r-sm);padding:9px 12px}
+.sent{margin:0 0 .3rem}
+.sent:last-child{margin-bottom:0}
+#caveatBox{margin:10px 0 2px;font-size:.85rem;color:var(--norm-line);background:none;
+  border:0;border-left:2px solid var(--norm-edge);border-radius:0;padding:2px 0 2px 12px}
 .empty{padding:40px 16px;text-align:center;color:var(--muted);font-size:.92rem}
 
 .side{display:flex;flex-direction:column;gap:12px;position:sticky;top:12px}
@@ -206,8 +208,7 @@ h1 .em{color:var(--accent)}
 .cavcodeat{color:var(--faint)}
 .cavev{color:var(--faint);font-size:.78rem;margin-top:.25rem;line-height:1.35}
 .cavpath{font-family:var(--font-mono);color:var(--muted)}
-.foot{margin-top:22px;padding-top:14px;border-top:1px solid var(--line);color:var(--faint);font-size:.8rem;
-  font-family:var(--font-mono);line-height:1.6}
+
 
 .modal{position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:16px}
 .modal[hidden]{display:none}
@@ -322,7 +323,6 @@ h1 .em{color:var(--accent)}
   </aside>
 </div>
 
-<div class="foot" id="foot"></div>
 </div>
 
 <div class="modal" id="signModal" hidden role="dialog" aria-modal="true" aria-labelledby="signTitle">
@@ -1349,18 +1349,24 @@ function drawProse() {
   const g = groups(S.act, S.mod, S.ch);
   const modo = GX.mods.find(m => m.id === S.mod);
   const nm = normFor();          /* under a speed filter this is that speed's own ensemble */
-  $("read").textContent = (S.agg
-    ? "The heavy line is the median across the " + NUM(g.inView.length) + " of the "
-      + NUM(GX.field.datasets) + " field datasets that release this " + modo.label.toLowerCase()
-      + " channel for this action, and the blue band is the interquartile range across those"
-      + " datasets, not across subjects. "
-    : "One line per dataset, drawn from " + NUM(g.inView.length) + " of the " + NUM(GX.field.datasets)
-      + " field datasets, every one that releases this " + modo.label.toLowerCase()
-      + " channel for this action: independent laboratories, independent participants, one cycle"
-      + " clock. The heavy line is their median and the blue band their interquartile range. ")
-    + NUM(g.held.length) + " deposited it and hold it back for a stated reason; "
-    + NUM(g.none.length) + " never deposited it. The list beside the plot names all three groups;"
-    + " click a dataset for its number, its identifier, its cycle origin and what is held back.";
+  /* One sentence per line. The words and their order are unchanged; only the paragraph is gone,
+     because a four-sentence block of small type is a block a reader skips whole. */
+  const sentences = (S.agg
+    ? ["The heavy line is the median across the " + NUM(g.inView.length) + " of the "
+       + NUM(GX.field.datasets) + " field datasets that release this " + modo.label.toLowerCase()
+       + " channel for this action, and the blue band is the interquartile range across those"
+       + " datasets, not across subjects."]
+    : ["One line per dataset, drawn from " + NUM(g.inView.length) + " of the "
+       + NUM(GX.field.datasets) + " field datasets, every one that releases this "
+       + modo.label.toLowerCase() + " channel for this action: independent laboratories,"
+       + " independent participants, one cycle clock.",
+       "The heavy line is their median and the blue band their interquartile range."])
+    .concat([NUM(g.held.length) + " deposited it and hold it back for a stated reason; "
+             + NUM(g.none.length) + " never deposited it.",
+             "The list beside the plot names all three groups; click a dataset for its number, its"
+             + " identifier, its cycle origin and what is held back."]);
+  const readBox = $("read"); readBox.textContent = "";
+  sentences.forEach(t => readBox.appendChild(el("div", "sent", t)));
   const [clo, chi] = clipOf(S.mod);
   const cav = ["Vertical axis: " + unitOf() + "."];
   if (clo > 0 || chi < 100) cav.push("Drawn over " + clo + " to " + chi
@@ -1410,7 +1416,8 @@ function drawProse() {
         + " cycle derivative only, so every dataset is on one axis." : ""));
   }
   cav.push("Cycle origin: " + GX.conv.cycle_zero + ".");
-  $("caveatBox").textContent = cav.join(" ");
+  const cavBox = $("caveatBox"); cavBox.textContent = "";
+  cav.forEach(t => cavBox.appendChild(el("div", "sent", t)));
 }
 function drawHead() {
   /* the number in the title is the count the page draws, never a typed one */
@@ -1418,14 +1425,7 @@ function drawHead() {
   $("title").appendChild(document.createTextNode("Standardized Resource of "));
   $("title").appendChild(el("span", "em", NUM(GX.field.datasets)));
   $("title").appendChild(document.createTextNode(" Public Datasets"));
-  let nj = 0, ne = 0, nv = 0;
-  for (const a in GX.curves) for (const m in GX.curves[a]) for (const c in GX.curves[a][m])
-    for (const k in GX.curves[a][m][c]) (m === "emg" ? ne++ : m === "velocity" ? nv++ : nj++);
-  $("foot").textContent = NUM(GX.field.healthy) + " datasets are healthy throughout; in "
-    + NUM(GX.field.mixed) + " the source also published a clinical or assisted arm and only the"
-    + " able-bodied arm is here. " + NUM(nv) + " angular-velocity curves are the cycle derivative of"
-    + " the unified angle. Built " + GX.generated + " from the released tables; the page carries its"
-    + " own data and reaches no network.";
+
 }
 
 /* ---------------------------------------------------------------- sign convention key */
