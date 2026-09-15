@@ -1,4 +1,4 @@
-# A standardized resource of 120 public lower-limb gait datasets
+# Cross-Dataset Gait Explorer: 120 Public Datasets
 
 **Open the explorer: https://biomechatronics001.github.io/IEEE-JBHI-120-biomechanics-datasets/**
 
@@ -7,7 +7,7 @@ datasets of the paper's field, healthy unassisted adults, on one gait-cycle cloc
 
 ## What you can do with it
 
-Pick a measure, a joint and an action, and every dataset that published that channel
+Pick a measure, a joint and a movement, and every dataset that published that channel
 is drawn at once, each in its own colour, with the pooled median and the
 between-dataset band over the top. Click a curve, or a name in the list beside it, to
 pin that dataset and read where it came from: its citation, its identifier, how many
@@ -38,3 +38,14 @@ that disagrees.
 
 The released tables, the pipeline that produces them and the manuscript live elsewhere
 and will be linked here on publication.
+
+## Citation
+
+Zhou, J., Zhong, S., Zheng, B., Gao, W., Wang, S., Yuan, Y., Zhou, X., & Su, H.
+(2026). *A Survey and Harmonization of 120 Public Datasets for Cross-Dataset
+Analysis of Lower-Limb Kinematics, Kinetics, and Surface EMG*. Manuscript and
+data release, version 2026-09-15.
+
+The archival DOI will be added after it is assigned. If you use specific curves,
+also cite their original dataset publications; select any dataset in the explorer
+to open its source citation. The explorer's **Cite** button also provides BibTeX.
